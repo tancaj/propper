@@ -28,5 +28,24 @@
 
 # Executables
 *.exe
+!premake5.exe
 *.out
 *.app
+
+#Build result
+**/bin/
+
+bin-int/
+
+# Visual Studio
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+

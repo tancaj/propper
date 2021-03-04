@@ -1,0 +1,7 @@
+[submodule "include/vendor/nlohmann"]
+	path = include/vendor/nlohmann
+	url = https://github.com/nlohmann/json.git
+[submodule "tests/vendor/Catch2"]
+	path = tests/vendor/Catch2
+	url = https://github.com/catchorg/Catch2.git
+	branch = v2.x
