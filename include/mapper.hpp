@@ -8,7 +8,7 @@
 
 namespace pr
 {
-	class mapper
+	class map
 	{
 	private:
 
@@ -18,15 +18,21 @@ namespace pr
 
 	private:
 
+		void add_mapping_error(const char* name, const char* error)
+		{
+			nlohmann::json error_obj;
+			error_obj["property"] = name;
+			error_obj["error"] = "missing property";
+			mapping_err["mapping_errors"].push_back(error_obj);
+		}
+
+
 		template <typename _prop_type, detail::property_pod _value_type>
 		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
 		{
 			if (data.find(prop.name) == data.end())
 			{
-				nlohmann::json error_obj;
-				error_obj["property"] = prop.name;
-				error_obj["error"] = "missing property";
-				mapping_err.push_back(error_obj);
+				add_mapping_error(prop.name, "missing property");
 				return _value_type{};
 			}
 
@@ -39,77 +45,82 @@ namespace pr
 			}
 			catch (const nlohmann::json::type_error)
 			{
-				nlohmann::json error_obj;
-				error_obj["property"] = prop.name;
-				error_obj["error"] = "type mismatch";
-				mapping_err.push_back(error_obj);
+				add_mapping_error(prop.name, "type mismatch");
 				return _value_type{};
 			}
 			catch (const nlohmann::json::exception& e)
 			{
-				nlohmann::json error_obj;
-				error_obj["property"] = prop.name;
-				error_obj["error"] = e.what();
-				mapping_err.push_back(error_obj);
+				add_mapping_error(prop.name, e.what());
 				return _value_type{};
 			}
 
 		}
 
+
 		template <typename _prop_type, detail::property_vector _value_type>
 		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
 		{
-			_value_type arr{};
-			using arr_type = typename _value_type::value_type;
-
 			if (data.find(prop.name) == data.end())
 			{
-				nlohmann::json error_obj;
-				error_obj["property"] = prop.name;
-				error_obj["error"] = "missing property";
-				return arr;
+				add_mapping_error(prop.name, "missing property");
+				return _value_type{};
 			}
 
-			if constexpr (std::is_class_v<arr_type> && !std::is_same_v<arr_type, std::string>)
-			{
-				const auto values = data[prop.name];
-				for (const auto& value : arr)
-					arr.emplace_back(from_json_object(value));
-			}
-			else
-			{
-				try
-				{
-					arr = data[prop.name].get<_value_type>();
-					for(const auto& value : arr)
-						verify_predicates(prop, value);
-				}
-				catch (const nlohmann::json::type_error)
-				{
-					nlohmann::json error_obj;
-					error_obj["property"] = prop.name;
-					error_obj["error"] = "type mismatch";
-					mapping_err.push_back(error_obj);
-					return _value_type{};
-				}
-				catch (const nlohmann::json::exception& e)
-				{
-					nlohmann::json error_obj;
-					error_obj["property"] = prop.name;
-					error_obj["error"] = e.what();
-					mapping_err.push_back(error_obj);
-					return _value_type{};
-				}
+			using arr_type = typename _value_type::value_type;
 
-			}
-
-			return arr;
+			return get_array_value<_prop_type,arr_type>(prop,data[prop.name]);
 		}
+
 
 		template<typename _prop_type, detail::property_object _value_type>
 		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
 		{
 			return from_json_object<_value_type>(data[prop.name]);
+		}
+
+		template<typename _prop_type, detail::property_pod _arr_type>
+		std::vector<_arr_type> get_array_value(const _prop_type& prop, const nlohmann::json& data)
+		{
+			try
+			{
+				auto arr = data.get<std::vector<_arr_type>>();
+				for(const auto& value : arr)
+					verify_predicates(prop, value);
+
+				return arr;
+			}
+			catch (const nlohmann::json::type_error)
+			{
+				add_mapping_error(prop.name, "type mismatch");
+				return std::vector<_arr_type>{};
+			}
+			catch (const nlohmann::json::exception& e)
+			{
+				add_mapping_error(prop.name, e.what());
+				return std::vector<_arr_type>{};
+			}
+		}
+
+		template<typename _prop_type, detail::property_object _arr_type>
+		std::vector<_arr_type> get_array_value(const _prop_type& prop, const nlohmann::json& data)
+		{
+			std::vector<_arr_type> arr;
+			for (const auto& value : data)
+				arr.emplace_back(from_json_object(value));
+
+			return arr;
+		}
+
+		template<typename _prop_type, detail::property_vector _arr_type>
+		std::vector<_arr_type> get_array_value(const _prop_type& prop, const nlohmann::json& data)
+		{
+			std::vector<_arr_type> arr;
+
+			using arr_type = typename _arr_type::value_type;
+			for (const auto& value : data)
+				arr.emplace_back(get_array_value<_prop_type,arr_type>(prop,value));
+
+			return arr;
 		}
 
 		template<std::size_t _iteration, typename _obj_type>
@@ -145,7 +156,7 @@ namespace pr
 				error_obj["property_value"] = value;
 				error_obj["predicate"] = pred.name;
 				error_obj["predicate_value"] = pred.value;
-				pred_err.push_back(error_obj);
+				mapping_err["predicate_errors"].push_back(error_obj);
 			}
 		}
 
@@ -175,14 +186,13 @@ namespace pr
 
 
 	private:
-		nlohmann::json pred_err;
 		nlohmann::json mapping_err;
 
 	public:
 		template<detail::property_object _obj_type>
 		static _obj_type from_json(const char* json)
 		{
-			mapper model_mapper = mapper();
+			map model_mapper = map();
 			_obj_type object{};
 
 			auto data = nlohmann::json::parse(json);
@@ -191,9 +201,6 @@ namespace pr
 
 			if(!model_mapper.mapping_err.empty())
 				throw detail::mapping_exception(model_mapper.mapping_err.dump());
-
-			if (!model_mapper.pred_err.empty())
-				throw detail::predicate_exception(model_mapper.pred_err.dump());
 
 			return object;
 		}

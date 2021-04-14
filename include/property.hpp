@@ -11,8 +11,7 @@ namespace pr
 	{
 		constexpr property(_type _class::* member, const char* name)
 			:member(member), name(name), predicates(std::forward<_pred>(_pred())...)
-		{
-		}
+		{}
 
 		using type = _type;
 		_type _class::* member;

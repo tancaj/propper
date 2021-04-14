@@ -108,7 +108,7 @@ namespace pr
 			}
 
 			static auto constexpr name = "is_regex";
-			static auto constexpr value = std::string(static_cast<char*>(_pred_value));
+			static auto constexpr value = static_cast<char*>(_pred_value);
 		};
 
 		template<detail::fixed_string _pred_value>
@@ -118,12 +118,12 @@ namespace pr
 
 			bool operator()(const std::string&  compare_value) const
 			{
-				std::string str(static_cast<const char*>( _pred_value));
+				std::string str((const char*)( _pred_value));
 				return str == compare_value;
 			}
 
 			static auto constexpr name = "is_same";
-			static auto constexpr value = std::string(static_cast<char*>(_pred_value));
+			static auto constexpr value = static_cast<const char*>(_pred_value);
 		};
 
 	}
