@@ -18,6 +18,13 @@ namespace pr
 		const char* name;
 		std::tuple<_pred...> predicates;
 	};
+
+	template <class... _type>
+	constexpr std::tuple<_type...>  make_properties(_type&&... args) 
+	{ 
+		return std::make_tuple(std::forward<_type>(args)...);
+	}
+
 }
 
 #endif

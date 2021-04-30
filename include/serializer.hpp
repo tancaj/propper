@@ -5,10 +5,13 @@
 #include "property.hpp"
 #include "concepts.hpp"
 #include "exception.hpp"
+#include "model.hpp"
+
+#include <string>
 
 namespace pr
 {
-	class map
+	class serializer
 	{
 	private:
 
@@ -18,12 +21,17 @@ namespace pr
 
 	private:
 
-		void add_mapping_error(const char* name, const char* error)
+		void add_error(const std::string& name, const std::string& error)
 		{
-			nlohmann::json error_obj;
-			error_obj["property"] = name;
-			error_obj["error"] = "missing property";
-			mapping_err["mapping_errors"].push_back(error_obj);
+			auto [it, inserted]=errors.try_emplace(name, std::vector<std::string>{error});
+			if (!inserted)
+				it->second.emplace_back(error);
+		}
+
+		template <typename _prop_type>
+		std::string create_error(const _prop_type& prop)
+		{
+			std::string error = "predicate ";
 		}
 
 
@@ -32,7 +40,7 @@ namespace pr
 		{
 			if (data.find(prop.name) == data.end())
 			{
-				add_mapping_error(prop.name, "missing property");
+				add_error(prop.name, "missing property");
 				return _value_type{};
 			}
 
@@ -45,12 +53,12 @@ namespace pr
 			}
 			catch (const nlohmann::json::type_error)
 			{
-				add_mapping_error(prop.name, "type mismatch");
+				add_error(prop.name, "type mismatch");
 				return _value_type{};
 			}
 			catch (const nlohmann::json::exception& e)
 			{
-				add_mapping_error(prop.name, e.what());
+				add_error(prop.name, e.what());
 				return _value_type{};
 			}
 
@@ -62,7 +70,7 @@ namespace pr
 		{
 			if (data.find(prop.name) == data.end())
 			{
-				add_mapping_error(prop.name, "missing property");
+				add_error(prop.name, "missing property");
 				return _value_type{};
 			}
 
@@ -91,12 +99,12 @@ namespace pr
 			}
 			catch (const nlohmann::json::type_error)
 			{
-				add_mapping_error(prop.name, "type mismatch");
+				add_error(prop.name, "type mismatch");
 				return std::vector<_arr_type>{};
 			}
 			catch (const nlohmann::json::exception& e)
 			{
-				add_mapping_error(prop.name, e.what());
+				add_error(prop.name, e.what());
 				return std::vector<_arr_type>{};
 			}
 		}
@@ -151,12 +159,12 @@ namespace pr
 		{
 			if (!pred(value))
 			{
-				nlohmann::json error_obj;
-				error_obj["property"] = prop_name;
-				error_obj["property_value"] = value;
-				error_obj["predicate"] = pred.name;
-				error_obj["predicate_value"] = pred.value;
-				mapping_err["predicate_errors"].push_back(error_obj);
+				//nlohmann::json error_obj;
+				//error_obj["property"] = prop_name;
+				//error_obj["property_value"] = value;
+				//error_obj["predicate"] = pred.name;
+				//error_obj["predicate_value"] = pred.value;
+				//mapping_err["predicate_errors"].push_back(error_obj);
 			}
 		}
 
@@ -184,23 +192,19 @@ namespace pr
 			return object;
 		}
 
-
 	private:
-		nlohmann::json mapping_err;
+		detail::error_map errors;
 
 	public:
 		template<detail::property_object _obj_type>
 		static _obj_type from_json(const char* json)
 		{
-			map model_mapper = map();
+			serializer ser = serializer();
 			_obj_type object{};
 
 			auto data = nlohmann::json::parse(json);
 
-			model_mapper.iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, data);
-
-			if(!model_mapper.mapping_err.empty())
-				throw detail::mapping_exception(model_mapper.mapping_err.dump());
+			ser.iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, data);
 
 			return object;
 		}

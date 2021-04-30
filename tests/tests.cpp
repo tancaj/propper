@@ -7,7 +7,7 @@
 
 
 
-class mock_model
+class mock_model : public pr::model
 {
 public:
 
@@ -18,8 +18,8 @@ public:
 	std::vector<std::vector<int>> stuff;
 
 
-	static auto constexpr properties = std::make_tuple(
-		pr::property<mock_model, int> {&mock_model::age, "age"},
+	static auto constexpr properties = pr::make_properties(
+		pr::property<mock_model, int, pr::pred::greater_than<3>> {&mock_model::age, "age"},
 		pr::property<mock_model, double> {&mock_model::height, "height"},
 		pr::property<mock_model, bool> {&mock_model::subscribed, "subscribed"},
 		pr::property<mock_model, std::string> {&mock_model::name, "name"},
@@ -33,15 +33,17 @@ TEST_CASE("Default mapping", "[mapping]")
 
 	const char* json = "{\"age\":24,\"name\":\"Doe\",\"height\":178.4,\"subscribed\": true, \"stuff\": [[1,2,3,4],[5,6,7,8]]}";
 	mock_model mock;
+
 	
 	try
 	{
-		mock = pr::map::from_json<mock_model>(json);
+		mock = pr::serializer::from_json<mock_model>(json);
 	}
 	catch (pr::propper_error& e)
 	{
 		auto det = e.details;
 	}
+
 
 	REQUIRE(mock.age == 24);
 	REQUIRE(mock.name== "Doe");
