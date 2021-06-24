@@ -3,7 +3,6 @@
 
 #include "concepts.hpp"
 
-
 namespace pr
 {
 	template<typename _class, detail::property_type _type, detail::predicate... _pred>

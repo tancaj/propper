@@ -26,7 +26,9 @@ workspace "propper"
 
     includedirs
     {
-        "include"
+        "include",
+        "include/vendor/fmt"
+
     }
 
     filter "configurations:Debug"

@@ -5,3 +5,6 @@
 	path = tests/vendor/Catch2
 	url = https://github.com/catchorg/Catch2.git
 	branch = v2.x
+[submodule "include/vendor/fmt"]
+	path = include/vendor/fmt
+	url = https://github.com/fmtlib/fmt.git

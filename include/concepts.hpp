@@ -41,17 +41,12 @@ namespace pr
 		concept predicate_invocable_types = std::predicate<_type, int> || std::predicate<_type, double> || std::predicate<_type, float> || std::predicate<_type, const char*>;
 
 		template<typename _type>
-		concept predicate_value_type = std::is_same_v<std::decay_t<_type>, int>
-			|| std::is_same_v<std::decay_t<_type>, double>
-			|| std::is_same_v<std::decay_t<_type>, float>
-			|| std::is_same_v<std::decay_t<_type>, bool>
-			|| std::is_same_v<std::decay_t<_type>, char>;
+		concept predicate_error_string = std::is_same_v<std::decay<_type>, std::string>;
 
 		template<typename _type>
 		concept predicate = requires(_type pred)
 		{
-			{pred.name}->std::convertible_to<const char*>;
-			{pred.value};//->predicate_value_type;
+			{pred.error};// -> predicate_error_string;
 		}
 		&& predicate_invocable_types<_type>;
 

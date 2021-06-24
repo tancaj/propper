@@ -28,13 +28,6 @@ namespace pr
 				it->second.emplace_back(error);
 		}
 
-		template <typename _prop_type>
-		std::string create_error(const _prop_type& prop)
-		{
-			std::string error = "predicate ";
-		}
-
-
 		template <typename _prop_type, detail::property_pod _value_type>
 		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
 		{
@@ -158,14 +151,7 @@ namespace pr
 		void verify_predicate(_pred_type pred, _val_type value, const char* prop_name )
 		{
 			if (!pred(value))
-			{
-				//nlohmann::json error_obj;
-				//error_obj["property"] = prop_name;
-				//error_obj["property_value"] = value;
-				//error_obj["predicate"] = pred.name;
-				//error_obj["predicate_value"] = pred.value;
-				//mapping_err["predicate_errors"].push_back(error_obj);
-			}
+				add_error(prop_name, pred.error);
 		}
 
 		template<std::size_t _iteration, typename _obj_type>
@@ -205,6 +191,12 @@ namespace pr
 			auto data = nlohmann::json::parse(json);
 
 			ser.iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, data);
+
+			if (!ser.errors.empty())
+			{
+				object.model_state.is_valid = false;
+				object.model_state.model_errors= ser.errors;
+			}
 
 			return object;
 		}
