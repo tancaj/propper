@@ -14,7 +14,7 @@ namespace pr
 			constexpr operator char const* () const { return buf; }
 		};
 
-		template<unsigned _> fixed_string(char const (&)[_])->fixed_string<_ - 1>;
+		template<unsigned size> fixed_string(char const (&)[size])->fixed_string<size - 1>;
 
 	}
 }

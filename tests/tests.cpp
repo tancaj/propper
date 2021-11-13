@@ -7,7 +7,7 @@
 
 
 
-class mock_model : public pr::model
+class mock_model
 {
 public:
 
@@ -19,10 +19,10 @@ public:
 
 
 	static auto constexpr properties = pr::make_properties(
-		pr::property<mock_model, int, pr::pred::greater_than<50>> {&mock_model::age, "age"},
+		pr::property<mock_model, int, pr::pred::greater_than<25>> {&mock_model::age, "age"},
 		pr::property<mock_model, double> {&mock_model::height, "height"},
 		pr::property<mock_model, bool> {&mock_model::subscribed, "subscribed"},
-		pr::property<mock_model, std::string> {&mock_model::name, "name"},
+		pr::property<mock_model, std::string, pr::pred::is_regex<"asd">> {&mock_model::name, "name"},
 		pr::property<mock_model, std::vector<std::vector<int>>> {&mock_model::stuff, "stuff"}
 	);
 };
@@ -32,15 +32,14 @@ TEST_CASE("Default mapping", "[mapping]")
 {
 
 	const char* json = "{\"age\":24,\"name\":\"Doe\",\"height\":178.4,\"subscribed\": true, \"stuff\": [[1,2,3,4],[5,6,7,8]]}";
-	mock_model mock;
 	
-	mock = pr::serializer::from_json<mock_model>(json);
+	auto [mock, model_state] = pr::serializer::from_json<mock_model>(json);
 
-	REQUIRE(mock.model_state.is_valid == true);
+	REQUIRE(model_state.is_valid == false);
 
 	REQUIRE(mock.age == 24);
 	REQUIRE(mock.name== "Doe");
-	REQUIRE(std::abs(mock.height-178.4)<0.01 );
+	REQUIRE(mock.height == Approx(178.4));
 	REQUIRE(mock.subscribed==true);
 
 }

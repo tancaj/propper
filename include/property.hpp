@@ -9,7 +9,7 @@ namespace pr
 	struct property
 	{
 		constexpr property(_type _class::* member, const char* name)
-			:member(member), name(name), predicates(std::forward<_pred>(_pred())...)
+			:member(member), name(name), predicates(_pred()...)
 		{}
 
 		using type = _type;

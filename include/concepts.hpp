@@ -2,7 +2,6 @@
 #define CONCEPTS_H
 
 #include <functional>
-#include "model.hpp"
 
 namespace pr
 {
@@ -14,7 +13,7 @@ namespace pr
 		struct is_vector<std::vector<T, A>> : public std::true_type {};
 
 		template<typename _type>
-		concept property_object = std::is_class_v<_type> && std::derived_from<_type,model>
+		concept property_object = std::is_class_v<_type> 
 		&& requires(_type prop_type)
 		{
 			{prop_type.properties};
@@ -38,7 +37,10 @@ namespace pr
 		concept property_vector = is_vector<_type>::value;
 
 		template<typename _type>
-		concept predicate_invocable_types = std::predicate<_type, int> || std::predicate<_type, double> || std::predicate<_type, float> || std::predicate<_type, const char*>;
+		concept predicate_invocable_types = std::predicate<_type, int> 
+			|| std::predicate<_type, double>
+			|| std::predicate<_type, float>
+			|| std::predicate<_type, const char*>;
 
 		template<typename _type>
 		concept predicate_error_string = std::is_same_v<std::decay<_type>, std::string>;

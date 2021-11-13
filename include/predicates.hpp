@@ -102,7 +102,7 @@ namespace pr
 
 			bool operator()(const std::string& compare_value) const
 			{
-				const std::regex pattern(static_cast<char*>( _pred_value)); 
+				std::regex pattern(static_cast<const char*>( _pred_value)); 
 				return std::regex_match(compare_value, pattern);
 			}
 

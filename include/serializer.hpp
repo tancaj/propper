@@ -5,7 +5,7 @@
 #include "property.hpp"
 #include "concepts.hpp"
 #include "exception.hpp"
-#include "model.hpp"
+#include "model_state.hpp"
 
 #include <string>
 
@@ -29,7 +29,7 @@ namespace pr
 		}
 
 		template <typename _prop_type, detail::property_pod _value_type>
-		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
+		_value_type get_value(const _prop_type& prop, nlohmann::json&& data)
 		{
 			if (data.find(prop.name) == data.end())
 			{
@@ -59,7 +59,7 @@ namespace pr
 
 
 		template <typename _prop_type, detail::property_vector _value_type>
-		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
+		_value_type get_value(const _prop_type& prop, nlohmann::json&& data)
 		{
 			if (data.find(prop.name) == data.end())
 			{
@@ -74,7 +74,7 @@ namespace pr
 
 
 		template<typename _prop_type, detail::property_object _value_type>
-		_value_type get_value(const _prop_type& prop, const nlohmann::json& data)
+		_value_type get_value(const _prop_type& prop, nlohmann::json&& data)
 		{
 			return from_json_object<_value_type>(data[prop.name]);
 		}
@@ -125,12 +125,12 @@ namespace pr
 		}
 
 		template<std::size_t _iteration, typename _obj_type>
-		void set_property(_obj_type&& object, const nlohmann::json& data)
+		void set_property(_obj_type&& object, nlohmann::json&& data)
 		{
 			constexpr auto property = std::get<_iteration>(std::decay_t<_obj_type>::properties);
 			using prop_value_type = typename decltype(property)::type;
 
-			object.*(property.member) = get_value<decltype(property),prop_value_type>(property,data);
+			object.*(property.member) = get_value<decltype(property),prop_value_type>(property,std::move(data));
 		}
 
 		template<typename _prop_type, typename _val_type>
@@ -156,25 +156,25 @@ namespace pr
 
 		template<std::size_t _iteration, typename _obj_type>
 		typename std::enable_if_t<is_zero_iteration<_iteration>::value>
-		iterate_data(_obj_type&& object, const nlohmann::json& data)
+		iterate_data(_obj_type&& object, nlohmann::json&& data)
 		{
-			set_property<_iteration>(object, data);
+			set_property<_iteration>(std::forward<_obj_type>(object), std::move(data));
 		}
 
 		template<std::size_t _iteration, typename _obj_type>
 		typename std::enable_if_t<!is_zero_iteration<_iteration>::value>
-		iterate_data(_obj_type&& object, const nlohmann::json& data)
+		iterate_data(_obj_type&& object, nlohmann::json&& data)
 		{
-			set_property<_iteration>(object, data);
-			iterate_data<_iteration - 1>(object, data);
+			set_property<_iteration>(std::forward<_obj_type>(object), std::move(data));
+			iterate_data<_iteration - 1>(std::forward<_obj_type>(object), std::move(data));
 		}
 
 
 		template<typename _obj_type>
-		_obj_type from_json_object(const nlohmann::json& data)
+		_obj_type from_json_object(nlohmann::json&& data)
 		{
 			_obj_type object{};
-			iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, data);
+			iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, std::move(data));
 			return object;
 		}
 
@@ -183,22 +183,12 @@ namespace pr
 
 	public:
 		template<detail::property_object _obj_type>
-		static _obj_type from_json(const char* json)
+		static std::pair<_obj_type,detail::model_state> from_json(std::string json)
 		{
-			serializer ser = serializer();
-			_obj_type object{};
-
-			auto data = nlohmann::json::parse(json);
-
-			ser.iterate_data<std::tuple_size<decltype(_obj_type::properties)>::value - 1>(object, data);
-
-			if (!ser.errors.empty())
-			{
-				object.model_state.is_valid = false;
-				object.model_state.model_errors= ser.errors;
-			}
-
-			return object;
+			serializer serialize;
+			return std::make_pair(
+				serialize.from_json_object<_obj_type>(nlohmann::json::parse(json)),
+				detail::model_state(serialize.errors));
 		}
 	};
 

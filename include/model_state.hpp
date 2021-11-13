@@ -15,7 +15,9 @@ namespace pr
 		struct model_state
 		{
 			bool is_valid=true;
-			error_map model_errors{};
+			error_map model_errors;
+
+			model_state(const error_map& errors) : model_errors(errors), is_valid(errors.empty()) {}
 		};
 	}
 }
