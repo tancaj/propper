@@ -5,11 +5,11 @@ namespace pr
 {
 	namespace detail
 	{
-		template<unsigned _size>
+		template<unsigned size>
 		struct fixed_string {
-			char buf[_size + 1]{};
+			char buf[size + 1]{};
 			constexpr fixed_string(char const* str) {
-				for (unsigned i = 0; i != _size; ++i) buf[i] = str[i];
+				for (unsigned i = 0; i != size; ++i) buf[i] = str[i];
 			}
 			constexpr operator char const* () const { return buf; }
 		};

@@ -33,7 +33,7 @@ TEST_CASE("Default mapping", "[mapping]")
 
 	const char* json = "{\"age\":24,\"name\":\"Doe\",\"height\":178.4,\"subscribed\": true, \"stuff\": [[1,2,3,4],[5,6,7,8]]}";
 	
-	auto [mock, model_state] = pr::serializer::from_json<mock_model>(json);
+	auto [mock, model_state] = pr::from_json<mock_model>(json);
 
 	REQUIRE(model_state.is_valid == false);
 
