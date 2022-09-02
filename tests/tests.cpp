@@ -6,7 +6,7 @@
 
 
 
-class mock_model
+class mock_user
 {
 public:
 
@@ -14,27 +14,13 @@ public:
 	double height;
 	bool subscribed;
 	std::string name;
-	std::vector<std::vector<int>> stuff;
 
 	DEFINE_PROPS(
-		PROP(mock_model, age, pr::pred::greater_than<25>),
-		PROP(mock_model, height),
-		PROP(mock_model, name),
-		PROP(mock_model, subscribed)
+		PROP(mock_user, age, pr::pred::greater_than<25>),
+		PROP(mock_user, height),
+		PROP(mock_user, name),
+		PROP(mock_user, subscribed)
 	)
-
-
-	 /* BEGIN_PROPS
-        PROP(mock_model,age,pr::pred::greater_than<25>,pr::pred::greater_eq_than<15>),
-        PROP(mock_model,height)
-        //pr::property<mock_model, decltype(mock_model::age), pr::pred::greater_than<25>> { &mock_model::age, "age" },
-		//pr::property<mock_model, double> {&mock_model::height, "height"},
-		//pr::property<mock_model, bool> {&mock_model::subscribed, "subscribed"},
-		//pr::property<mock_model, std::string, pr::pred::is_regex<"asd">> {&mock_model::name, "name"},
-		//pr::property<mock_model, std::vector<std::vector<int>>> {&mock_model::stuff, "stuff"},
-		//pr::property<mock_model, std::vector<mock_model_2>> {&mock_model::geges, "geges"},
-		//pr::property<mock_model, std::vector<std::vector<mock_model_2>>> {&mock_model::gagus, "gagus"}
-	END_PROPS*/
 };
 
 
@@ -43,7 +29,7 @@ TEST_CASE("Default mapping", "[mapping]")
 
 	const char* json = "{\"age\":24,\"name\":\"Doe\",\"height\":178.4,\"subscribed\": true, \"stuff\": [[1,2,3,4],[5,6,7,8]]}";
 	
-	auto [mock, model_state] = pr::from_json<mock_model>(json);
+	auto [mock, model_state] = pr::from_json<mock_user>(json);
 
 	REQUIRE(model_state.is_valid == false);
 
@@ -54,5 +40,4 @@ TEST_CASE("Default mapping", "[mapping]")
 
 
 	auto string = pr::to_json(mock);
-
 }
