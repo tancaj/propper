@@ -11,12 +11,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout/@v3
-      - name: Setup MSBuild
+        with:
+          submodules: recursive
+      - name: Setup Compiler
         uses: microsoft/setup-msbuild@v1.1
         with: 
             msbuild-architecture: x64
         
-      - name: Generate solution
+      - name: Generate build files
         run: vendor\premake\premake5.exe vs2022
         
       - name: Build
