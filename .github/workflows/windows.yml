@@ -23,4 +23,7 @@ jobs:
         
       - name: Build
         run: msbuild /m /p:Configuration=Release propper.sln
+        
+      - name: Tests
+        run: bin\release-windows-x86_64\tests\tests.exe
     
