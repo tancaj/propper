@@ -17,7 +17,7 @@ jobs:
             msbuild-architecture: x64
         
       - name: Generate solution
-        run: vendor\premake\premake5.exe vs2022
+        run: vendor\premake\windows\premake5.exe vs2022
         
       - name: Build
         run: msbuild /m /p:Configuration=Release propper.sln
