@@ -11,7 +11,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout/@v3
-      - name: Setup MSBuild
+        with:
+          submodules: recursive
+      - name: Setup Compiler
         uses: microsoft/setup-msbuild@v1.1
         with: 
             msbuild-architecture: x64
@@ -21,4 +23,7 @@ jobs:
         
       - name: Build
         run: msbuild /m /p:Configuration=Release propper.sln
+        
+      - name: Tests
+        run: bin\release-windows-x86_64\tests\tests.exe
     
