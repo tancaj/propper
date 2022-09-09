@@ -1,5 +1,5 @@
-#ifndef MAPPER_H
-#define MAPPER_H
+#ifndef SERIALIZER_H
+#define SERIALIZER_H
 
 #include <string>
 
@@ -30,7 +30,7 @@ namespace detail {
     template <constraints::propped_object _object>
     nlohmann::json to_json_object(_object&& object)
     {
-        auto json = nlohmann::json();
+        auto json = nlohmann::json::object();
         auto error = error_map {};
         iterate_properties<
             std::tuple_size<decltype(std::decay_t<_object>::properties)>::value - 1, to_json_tag>(
@@ -38,7 +38,7 @@ namespace detail {
         return json;
     }
 
-    void add_error(detail::error_map& errors, std::string_view name,
+    inline void add_error(detail::error_map& errors, std::string_view name,
         std::string_view error)
     {
         auto [it, inserted] = errors.try_emplace(
@@ -164,7 +164,7 @@ namespace detail {
         constraints::vector _vector>
     nlohmann::json write_array_value(_vector&& values)
     {
-        auto json = nlohmann::json();
+        auto json = nlohmann::json::array();
         for (auto&& value : values)
             json.emplace_back(std::forward<_inner_trivial>(value));
 
@@ -175,7 +175,7 @@ namespace detail {
         constraints::vector _vector>
     nlohmann::json write_array_value(_vector&& values)
     {
-        auto json = nlohmann::json();
+        auto json = nlohmann::json::array();
         for (auto&& value : values)
             json.emplace_back(to_json_object(std::forward<_inner_object>(value)));
 
@@ -185,7 +185,7 @@ namespace detail {
     template <constraints::vector _inner_vector, constraints::vector _vector>
     nlohmann::json write_array_value(_vector&& values)
     {
-        auto json = nlohmann::json();
+        auto json = nlohmann::json::array();
         for (auto&& value : values)
             json.emplace_back(write_array_value<inner_type<_inner_vector>>(
                 std::forward<inner_type<_vector>>(value)));

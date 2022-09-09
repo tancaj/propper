@@ -21,7 +21,7 @@ namespace detail {
         std::tuple<_pred...> predicates;
     };
 
-    template <class... _type>
+    template <typename... _type>
     constexpr std::tuple<_type...> make_properties(_type&&... args)
     {
         return std::make_tuple(std::forward<_type>(args)...);
@@ -36,7 +36,7 @@ namespace detail {
 
 #ifndef DEFINE_PROPS
 #define DEFINE_PROPS(...) static auto constexpr properties = pr::detail::make_properties( \
-                              ##__VA_ARGS__);
+                              ##__VA_ARGS__)
 #endif
 
 #endif

@@ -53,7 +53,8 @@ workspace "propper"
 
     files
     {
-        "%{prj.name}/*.cpp"
+        "%{prj.name}/*.cpp",
+        "%{prj.name}/*.h"
     }
 
     includedirs
