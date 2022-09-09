@@ -18,7 +18,7 @@ jobs:
         with: 
             msbuild-architecture: x64
         
-      - name: Generate solution
+      - name: Generate build files
         run: vendor\premake\windows\premake5.exe vs2022
         
       - name: Build
