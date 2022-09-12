@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: linux
 
 on:
   push:
@@ -16,10 +16,10 @@ jobs:
       with:
          submodules: recursive
     - name: Configure
-      run: chmod +x vendor\premake\linux\premake5
+      run: chmod +x ./vendor/premake/linux/premake5
     - name: Generate build files
-      run: vendor\premake\linux\premake5 gmake2
+      run: ./vendor/premake/linux/premake5 gmake2
     - name: Build
       run: make config=release tests
     - name: Tests
-      run: bin\release-linux-x86_64\tests\tests
+      run: ./bin/release-linux-x86_64/tests/tests
