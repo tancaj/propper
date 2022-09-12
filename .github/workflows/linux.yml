@@ -17,8 +17,9 @@ jobs:
          submodules: recursive
     - name: Configure
       run: chmod +x ./vendor/premake/linux/premake5
+           sudo apt install g++-12.2
     - name: Generate build files
-      run: ./vendor/premake/linux/premake5 gmake2
+      run: ./vendor/premake/linux/premake5 gmake2 
     - name: Build
       run: make config=release tests
     - name: Tests
