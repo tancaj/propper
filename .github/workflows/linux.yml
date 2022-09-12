@@ -1,0 +1,25 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master", "development" ]
+  pull_request:
+    branches: [ "master", "development" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout/@v3
+      with:
+         submodules: recursive
+    - name: Configure
+      run: chmod +x vendor\premake\linux\premake5
+    - name: Generate build files
+      run: vendor\premake\linux\premake5 gmake2
+    - name: Build
+      run: make config=release tests
+    - name: Tests
+      run: bin\release-linux-x86_64\tests\tests
