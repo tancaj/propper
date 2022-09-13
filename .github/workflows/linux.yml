@@ -18,7 +18,8 @@ jobs:
     - name: Configure
       run: |
            chmod +x ./vendor/premake/linux/premake5
-           sudo apt install g++-12.2
+           sudo apt update
+           sudo apt install gcc-12 g++-12
     - name: Generate build files
       run: ./vendor/premake/linux/premake5 gmake2 
     - name: Build
