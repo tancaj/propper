@@ -23,6 +23,6 @@ jobs:
     - name: Generate build files
       run: ./vendor/premake/linux/premake5 gmake2 
     - name: Build
-      run: make config=release tests
+      run: make config=release CC=gcc-11 CPP=g++-11 CXX=g++-11 LD=g++-11 tests
     - name: Tests
       run: ./bin/release-linux-x86_64/tests/tests
