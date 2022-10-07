@@ -1,4 +1,4 @@
-name: linux CI
+name: linux
 
 on:
   push:
@@ -12,7 +12,15 @@ jobs:
     name: ${{matrix.toolset}} - ${{matrix.build_config}}
     strategy:
       matrix:
-        build_config: [debug, release]
+        build_config:
+          - debug
+          - release
+        toolset:
+          - g++-8
+          - g++-9
+          - g++-10
+          #- g++-11
+          #- g++-12
         include:
           - toolset: g++-8
             std: 2a
