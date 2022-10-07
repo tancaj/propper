@@ -12,6 +12,7 @@ jobs:
     name: ${{matrix.toolset}} - ${{matrix.build_config}}
     strategy:
       matrix:
+        build_config: [debug, release]
         include:
           - toolset: g++-8
             std: 2a
@@ -36,7 +37,7 @@ jobs:
            sudo apt update
            sudo apt install ${{matrix.toolset}}
     - name: Generate build files
-      run: ./vendor/premake/linux/premake5 gmake2 --std=${{std}}
+      run: ./vendor/premake/linux/premake5 gmake2 --std=${{matrix.std}}
     - name: Build
       run: make config=release CXX=${{matrix.toolset}} tests
     - name: Tests
