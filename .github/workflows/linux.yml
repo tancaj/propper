@@ -38,7 +38,6 @@ jobs:
          submodules: recursive
     - name: Configure
       run: |
-          git submodule update --remote --jobs 3 
           chmod +x ./vendor/premake/linux/premake5
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt update
