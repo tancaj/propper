@@ -34,6 +34,7 @@ jobs:
     - name: Configure
       run: |
            chmod +x ./vendor/premake/linux/premake5
+           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
            sudo apt update
            sudo apt install ${{matrix.toolset}}
     - name: Generate build files
