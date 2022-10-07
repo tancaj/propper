@@ -1,0 +1,39 @@
+name: msvc
+
+on:
+  push:
+  pull_request:
+    branches: 
+      - master
+      - develop
+
+jobs:
+  build:
+    name: ${{matrix.toolset}} ${{matrix.build_config}}
+    strategy:
+      matrix:
+        build_config:
+          - debug
+          - release
+        toolset:
+          - vs2019
+          - vs2022
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout/@v3
+        with:
+          submodules: recursive
+      - name: Setup Compiler
+        uses: microsoft/setup-msbuild@v1.1
+        with: 
+            msbuild-architecture: x64
+        
+      - name: Generate build files
+        run: vendor\premake\windows\premake5.exe ${{matrix.toolset}}
+        
+      - name: Build
+        run: msbuild /m /p:Configuration=${{matrix.build_config}} propper.sln
+        
+      - name: Tests
+        run: bin\${{matrix.build_config}}-windows-x86_64\tests\tests.exe
+    
