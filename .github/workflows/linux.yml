@@ -26,9 +26,9 @@ jobs:
           - toolset: g++-11
             std: 20
             os: ubuntu-22.04
-          - toolset: g++-12
-            std: 20
-            os: ubuntu-22.04
+          #- toolset: g++-12
+          #  std: 20
+          #  os: ubuntu-22.04
 
     runs-on: ${{matrix.os}}
 
