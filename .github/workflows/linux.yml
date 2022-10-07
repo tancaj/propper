@@ -36,14 +36,13 @@ jobs:
     - uses: actions/checkout/@v3
       with:
          submodules: recursive
-      run:
-        git submodule update --init --jobs 3 
     - name: Configure
       run: |
-           chmod +x ./vendor/premake/linux/premake5
-           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-           sudo apt update
-           sudo apt install ${{matrix.toolset}}
+          git submodule update --init --jobs 3 
+          chmod +x ./vendor/premake/linux/premake5
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt install ${{matrix.toolset}}
     - name: Generate build files
       run: ./vendor/premake/linux/premake5 gmake2 --std=${{matrix.std}}
     - name: Build
