@@ -47,6 +47,14 @@ namespace detail {
             it->second.emplace_back(error);
     }
 
+    template <typename _predicate, typename _value>
+    void verify_predicate(_predicate pred, _value value, const char* prop_name,
+        detail::error_map& errors)
+    {
+        if (!pred(value))
+            add_error(errors, prop_name, pred.get_error());
+    }
+    
     template <typename _prop, typename _value>
     void verify_predicates(_prop prop, _value value,
         detail::error_map& errors)
@@ -69,13 +77,6 @@ namespace detail {
             prop.predicates);
     }
 
-    template <typename _predicate, typename _value>
-    void verify_predicate(_predicate pred, _value value, const char* prop_name,
-        detail::error_map& errors)
-    {
-        if (!pred(value))
-            add_error(errors, prop_name, pred.get_error());
-    }
 
     template <typename _prop, constraints::json_trivials _trivial>
     _trivial read_value(const _prop& prop, nlohmann::json&& data,
@@ -87,7 +88,7 @@ namespace detail {
         }
 
         try {
-            auto value = data[prop.name].get<_trivial>();
+            auto value = data[prop.name].template get<_trivial>();
             verify_predicates(prop, value, errors);
 
             return value;

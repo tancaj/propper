@@ -98,7 +98,7 @@ TEST_CASE("Serialization with predicates", "[predicates]")
 	REQUIRE(mock.age==37);
 	REQUIRE(mock.height==178);
 
-	REQUIRE(json == pr::to_json(mock));
+	REQUIRE(pr::to_json(mock)==R"({"age":37,"email":"ibb@obb.com","height":178,"password":"IbbObb1337"})");
 }
 
 TEST_CASE("Predicate error handling", "[predicates]")
@@ -132,5 +132,5 @@ TEST_CASE("Predicate error handling", "[predicates]")
 	REQUIRE(mock.age==-10);
 	REQUIRE(mock.height==260);
 
-	REQUIRE(json == pr::to_json(mock));
+	REQUIRE(pr::to_json(mock)==R"({"age":-10,"email":"ibb@obb.com","height":260,"password":"Ibb10"})");
 }

@@ -28,9 +28,7 @@ TEST_CASE("Trivial serialization", "[trivial properties]")
     REQUIRE(mock.need_repair == true);
     REQUIRE(mock.price == Approx(160.5));
 
-    auto string = pr::to_json(mock);
-
-    REQUIRE(string == json);
+    REQUIRE(pr::to_json(mock) == R"({"level":28,"material":"steel","need_repair":true,"price":160.5})");
 }
 
 TEST_CASE("Missing property handling", "[trivial properties]")
@@ -54,15 +52,7 @@ TEST_CASE("Missing property handling", "[trivial properties]")
     REQUIRE(mock.material == "steel");
     REQUIRE(mock.need_repair == true);
 
-    auto string = pr::to_json(mock);
-
-    REQUIRE(string == JSON_LITERAL({
-
-        "level" : 28,
-        "material" : "steel",
-        "need_repair" : true,
-        "price" : 0.0
-    }));
+    REQUIRE(pr::to_json(mock) == R"({"level":28,"material":"steel","need_repair":true,"price":0.0})");
 }
 
 TEST_CASE("Type mismatch handling", "[trivial properties]")
@@ -87,13 +77,5 @@ TEST_CASE("Type mismatch handling", "[trivial properties]")
     REQUIRE(mock.need_repair == true);
     REQUIRE(mock.price == Approx(160.5));
 
-    auto string = pr::to_json(mock);
-
-    REQUIRE(string == JSON_LITERAL({
-
-        "level" : 0,
-        "material" : "steel",
-        "need_repair" : true,
-        "price" : 160.5
-    }));
+    REQUIRE(pr::to_json(mock) == R"({"level":0,"material":"steel","need_repair":true,"price":160.5})");
 }

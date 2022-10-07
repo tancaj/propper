@@ -92,7 +92,5 @@ TEST_CASE("Nested serialization", "[nested properties]")
 
     REQUIRE(mock.users[2].weapons.empty());
 
-    auto string = pr::to_json(mock);
-
-    REQUIRE(string == json);
+    REQUIRE(pr::to_json(mock) == R"({"name":"Clan2000","rating":4.5,"users":[{"level":24,"name":"Bob34","weapons":[{"level":13,"material":"wood","need_repair":true,"price":100.5}]},{"level":32,"name":"bossman","weapons":[{"level":21,"material":"wood","need_repair":false,"price":120.5},{"level":41,"material":"steel","need_repair":false,"price":500.0}]},{"level":2,"name":"n00b","weapons":[]}]})");
 }

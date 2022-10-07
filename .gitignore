@@ -43,6 +43,10 @@ bin-int/
 *.vcxproj
 *.vcxproj.filters
 
+# Makefiles
+*.make
+Makefile
+
 # User-specific files
 *.suo
 *.user

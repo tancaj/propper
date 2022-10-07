@@ -28,15 +28,15 @@ namespace detail {
     }
 }
 }
+#define MEMBER_OF_CLASS(C, member) C::member
+
 
 #ifndef PROP
-#define PROP(C, member, ...) \
-    pr::detail::property<C, decltype(##C::##member), ##__VA_ARGS__> { &##C::##member, #member }
+#define PROP(C, member, ...) pr::detail::property<C, decltype(C::member), ##__VA_ARGS__> { &MEMBER_OF_CLASS(C,member), #member }
 #endif
 
 #ifndef DEFINE_PROPS
-#define DEFINE_PROPS(...) static auto constexpr properties = pr::detail::make_properties( \
-                              ##__VA_ARGS__)
+#define DEFINE_PROPS(...) static auto constexpr properties = pr::detail::make_properties( __VA_ARGS__ )
 #endif
 
 #endif
