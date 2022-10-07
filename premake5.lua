@@ -2,6 +2,17 @@ workspace "propper"
     architecture "x64"
     startproject "sandbox"
 
+    newoption{
+        trigger = "std",
+        value = "20",
+        description = "C++ version",
+        allowed ={
+            {"20", "c++20"},
+            {"2a", "c++2a"}
+        },
+        default= "20"
+    }
+
     configurations
     {
         "debug",
@@ -14,7 +25,6 @@ workspace "propper"
     project "sandbox"
         kind "ConsoleApp"
         language "C++"
-        cppdialect "c++20"
         targetdir("bin/" .. outputdir .."/%{prj.name}")
         objdir("bin-int/" .. outputdir .."/%{prj.name}")
 
@@ -44,10 +54,15 @@ workspace "propper"
         runtime "Release"
         optimize "on"
 
+    filter "options:std=20"
+        cppdialect "c++20"
+
+    filter "options:std=2a"
+        cppdialect "c++2a"
+
     project "tests"
         kind "ConsoleApp"
         language "C++"
-        cppdialect "c++20"
         targetdir("bin/" .. outputdir .."/%{prj.name}")
         objdir("bin-int/" .. outputdir .."/%{prj.name}")
 
@@ -76,6 +91,12 @@ workspace "propper"
     filter "configurations:Dist"
         runtime "Release"
         optimize "on"
+
+    filter "options:std=20"
+        cppdialect "c++20"
+
+    filter "options:std=2a"
+        cppdialect "c++2a"
 
 
 

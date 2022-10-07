@@ -1,13 +1,28 @@
-name: linux
+name: linux CI
 
 on:
   push:
-    branches: [ "master", "development" ]
   pull_request:
-    branches: [ "master", "development" ]
+    branches: 
+      - master
+      - develop
 
 jobs:
   build:
+    name: ${{matrix.toolset}} - ${{matrix.build_config}}
+    strategy:
+      matrix:
+        include:
+          - toolset: g++-8
+            std: 2a
+          - toolset: g++-9
+            std: 2a
+          - toolset: g++-10
+            std: 20
+          - toolset: g++-11
+            std: 20
+          - toolset: g++-12
+            std: 20
 
     runs-on: ubuntu-latest
 
@@ -19,10 +34,10 @@ jobs:
       run: |
            chmod +x ./vendor/premake/linux/premake5
            sudo apt update
-           sudo apt install gcc-11 g++-11
+           sudo apt install ${{matrix.toolset}}
     - name: Generate build files
-      run: ./vendor/premake/linux/premake5 gmake2 
+      run: ./vendor/premake/linux/premake5 gmake2 --std=${{std}}
     - name: Build
-      run: make config=release CC=gcc-11 CPP=g++-11 CXX=g++-11 LD=g++-11 tests
+      run: make config=release CXX=${{matrix.toolset}} tests
     - name: Tests
       run: ./bin/release-linux-x86_64/tests/tests
