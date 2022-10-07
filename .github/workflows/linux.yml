@@ -16,16 +16,21 @@ jobs:
         include:
           - toolset: g++-8
             std: 2a
+            os: ubuntu-20.04
           - toolset: g++-9
             std: 2a
+            os: ubuntu-20.04
           - toolset: g++-10
             std: 20
+            os: ubuntu-20.04
           - toolset: g++-11
             std: 20
+            os: ubuntu-22.04
           - toolset: g++-12
             std: 20
+            os: ubuntu-22.04
 
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
 
     steps:
     - uses: actions/checkout/@v3
