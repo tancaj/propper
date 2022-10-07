@@ -23,9 +23,9 @@ jobs:
           - toolset: g++-10
             std: 20
             os: ubuntu-20.04
-          - toolset: g++-11
-            std: 20
-            os: ubuntu-22.04
+          #- toolset: g++-11
+          #  std: 20
+          #  os: ubuntu-22.04
           #- toolset: g++-12
           #  std: 20
           #  os: ubuntu-22.04
@@ -45,6 +45,6 @@ jobs:
     - name: Generate build files
       run: ./vendor/premake/linux/premake5 gmake2 --std=${{matrix.std}}
     - name: Build
-      run: make config=release CXX=${{matrix.toolset}} tests
+      run: make config=${{matrix.build_config}} CXX=${{matrix.toolset}} tests
     - name: Tests
-      run: ./bin/release-linux-x86_64/tests/tests
+      run: ./bin/${{matrix.build_config}}-linux-x86_64/tests/tests
