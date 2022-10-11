@@ -161,7 +161,7 @@ Two types of error could occur during conversion:
 - predicate error
 
 ### Compiler support
-Propper is tested against the following compilers:
+Propper is tested with the following compilers:
 - vs2019, vs2022
 - gcc10, gcc11, gcc12
  
