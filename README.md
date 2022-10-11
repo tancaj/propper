@@ -159,6 +159,11 @@ When converting from json, the conversion returns the state of the returned obje
 Two types of error could occur during conversion:
 - direct conversion error (missing property in the JSON or type mismatch between the JSON property and the annotated members)
 - predicate error
+
+### Compiler support
+Propper is tested against the following compilers:
+- vs2019, vs2022
+- gcc10, gcc11, gcc12
  
 ### Contribution
 If you would like to play around with propper clone the repository recursively. You can generate the neccesary build files for the test and the sanbox projects with premake. The premake executable for different platforms are found here:
