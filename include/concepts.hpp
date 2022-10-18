@@ -2,6 +2,7 @@
 #define CONCEPTS_H
 
 #include <functional>
+#include <optional>
 
 namespace pr {
 namespace detail {
