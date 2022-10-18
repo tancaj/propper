@@ -5,7 +5,7 @@
 
 #include "json_literal.h"
 
-#include "mocks.h"
+#include "nested_mocks.h"
 
 TEST_CASE("Trivial serialization", "[trivial properties]")
 {

@@ -15,11 +15,20 @@ namespace detail {
         struct is_vector<std::vector<_type>> : public std::true_type {
         };
 
+        template<typename _type>
+        struct is_optional : public std::false_type{};
+
+        template<typename _type>
+        struct is_optional<std::optional<_type>> : public std::true_type{};
+
         template <typename _type>
         concept propped_object = std::is_class_v<std::decay_t<_type>> && requires(_type prop_type)
         {
             { prop_type.properties };
         };
+
+        template<typename _type>
+        concept optional = is_optional<std::decay_t<_type>>::value;
 
         template <typename _type>
         concept json_trivials = std::is_same_v < std::decay_t<_type>,
@@ -33,7 +42,7 @@ namespace detail {
         concept vector = is_vector<std::decay_t<_type>>::value;
 
         template <typename _type>
-        concept property_type = propped_object<_type> || json_trivials<_type> || vector<_type>;
+        concept property_type = propped_object<_type> || json_trivials<_type> || vector<_type> || optional<_type>;
 
         template <typename _type>
         concept predicate_invocable_types = std::predicate<_type, int> || std::predicate<_type, double> || std::predicate<_type, float> || std::predicate<_type, bool> || std::predicate<_type, const char*> || std::predicate<_type, std::string>;
