@@ -67,12 +67,12 @@ namespace pr {
 		}
 
 		template <typename _prop, constraints::string _string>
-		void verify_predicates(_prop prop, _string value,
+		void verify_predicates(_prop prop, _string&& value,
 			detail::error_map& errors)
 		{
 			std::apply(
 				[&value, &prop, &errors](auto&&... pred) {
-				((verify_predicate(pred, value.data(), prop.name, errors)), ...);
+				((verify_predicate(pred, value, prop.name, errors)), ...);
 			},
 				prop.predicates);
 		}
@@ -131,13 +131,14 @@ namespace pr {
 		_vector read_value(const _prop& prop, nlohmann::json&& data,
 			detail::error_map& errors)
 		{
-			if (data.find(prop.name) == data.end()) {
+			auto json = data.find(prop.name);
+			if (json == data.end()) {
 				add_error(errors, prop.name, "missing property");
 				return _vector{};
 			}
 
 			return read_array_value<_prop, inner_type<_vector>>(
-				prop, std::move(data[prop.name]), errors);
+				prop, std::move(*json), errors);
 		}
 
 		template <typename _prop, constraints::propped_object _object>
