@@ -129,7 +129,7 @@ If a predicate fails, its error will be present in the model state object (retur
 - `range_eq`
 - `regex`
 #### Custom predicates
-If you need a custom predicates, you can easily implement one yourself. Predicates must be constexpr invocable objects that adhere two constraints:
+If you need a custom predicate, you can easily implement one yourself. Predicates must be constexpr invocable objects that adhere two constraints:
 - statisfy the `std::predicate` [concept](https://en.cppreference.com/w/cpp/concepts/predicate) with the supported types
 - have a function named `get_error()` that returns a `constexpr std::string`
   
